@@ -23,7 +23,7 @@ GIT_TAG    = $(shell git describe --tags --abbrev=0 --exact-match 2>/dev/null)
 GIT_DIRTY  = $(shell test -n "`git status --porcelain`" && echo "dirty" || echo "clean")
 
 .PHONY: all
-all: tracer agent build-image push-image
+all: tracer agent 
 
 # ------------------------------------------------------------------------------
 #  build
@@ -41,12 +41,12 @@ $(BINDIR)/$(AGENT_NAME): $(SRC)
 	@echo "====    Build x-agent    ===="
 	GO111MODULE=on go build $(GOFLAGS) -tags '$(TAGS)' -ldflags '$(LDFLAGS)' -o $(BINDIR)/$(AGENT_NAME) ./cmd/x-agent
 
-.PHONY: build-image
-build-image:
+.PHONY: release
+release:
 	docker build --pull=false -f build/Dockerfile -t "x-agent" . --no-cache
 
-.PHONY: push-image
-push-image:
+.PHONY: publish
+publish:
 	docker tag x-agent $(NS)/$(IMAGE):$(VERSION)
 	docker push  $(NS)/$(IMAGE):$(VERSION)
 #	docker save x-agent | gzip > x-agent.tar.gz
