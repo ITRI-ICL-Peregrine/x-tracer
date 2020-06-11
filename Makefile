@@ -5,7 +5,7 @@ GOPATH = $(shell go env GOPATH)
 BINNAME     ?= x-tracer
 AGENT_NAME  ?= x-agent
 
-NS ?= sheenam3
+NS ?= "replace_with_your_docker_hub_id"
 IMAGE  ?= x-agent
 VERSION ?= latest
 # go option
@@ -49,9 +49,7 @@ release:
 publish:
 	docker tag x-agent $(NS)/$(IMAGE):$(VERSION)
 	docker push  $(NS)/$(IMAGE):$(VERSION)
-#	docker save x-agent | gzip > x-agent.tar.gz
-#	scp x-agent.tar.gz root@node2:~/
-#	ssh root@node2 'docker load < x-agent.tar.gz
+
 
 
 # ------------------------------------------------------------------------------
@@ -60,7 +58,4 @@ publish:
 clean:
 	@rm -rf $(BINDIR) ./_dist
 	@docker rmi x-agent
-	@docker rmi sheenam3/x-agent:latest
-#	@rm x-agent.tar.gz
-#	@ssh root@node2 'docker rmi x-agent'
-#	@ssh root@node2 'rm ~/x-agent.tar.gz' 
+	@docker rmi $(NS)/$(IMAGE):$(VERSION)
