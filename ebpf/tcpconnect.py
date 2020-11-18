@@ -214,18 +214,18 @@ def print_ipv4_event(cpu, data, size):
     event = b["ipv4_events"].event(data)
     global start_ts
     if args.tstamp:
-	print("%-8s " % strftime("%H:%M:%S"), end="")
+	print("%-15s " % strftime("%H:%M:%S"), end="")
     if args.timestamp:
         if start_ts == 0:
             start_ts = event.ts_us
-        printb(b"%-9.3f" % ((float(event.ts_us) - start_ts) / 1000000), nl="")
+        printb(b"%-15.3f" % ((float(event.ts_us) - start_ts) / 1000000), nl="")
     if args.print_uid:
         printb(b"%-6d" % event.uid, nl="")
     if args.netns:
         print("%-16d" % event.netns, end="")
     
 
-    printb(b"%-6d %-12.12s %-2d %-16s %-16s %-10d" % (event.pid,
+    printb(b"%-10d %-12.12s %-12d %-16s %-16s %-10d" % (event.pid,
         event.task, event.ip,
         inet_ntop(AF_INET, pack("I", event.saddr)).encode(),
         inet_ntop(AF_INET, pack("I", event.daddr)).encode(), event.dport))
@@ -245,7 +245,7 @@ def print_ipv6_event(cpu, data, size):
         print("%-16d" % event.netns, end="")
     
 
-    printb(b"%-6d %-12.12s %-2d %-16s %-16s %-10d" % (event.pid,
+    printb(b"%-10d %-12.12s %-12d %-16s %-16s %-10d" % (event.pid,
         event.task, event.ip,
         inet_ntop(AF_INET6, event.saddr).encode(), inet_ntop(AF_INET6, event.daddr).encode(),
         event.dport))
@@ -259,15 +259,15 @@ b.attach_kretprobe(event="tcp_v6_connect", fn_name="trace_connect_v6_return")
 
 # header
 if args.tstamp:
-    print("%-8s " % "SYS_TIME", end="")
+    print("%-15s " % "SYS_TIME", end="")
 if args.timestamp:
-    print("%-9s" % ("TIME(s)"), end="")
+    print("%-15s" % ("TIME(s)"), end="")
 if args.print_uid:
     print("%-6s" % ("UID"), end="")
 if args.netns:
     print("%-16s" % ("NETNS"), end="")
 
-print("%-6s %-12s %-2s %-16s %-16s %-10s" % ("PID", "COMM", "IP", "SADDR",
+print("%-10s %-12s %-12s %-16s %-16s %-10s" % ("PID", "COMM", "IP", "SADDR",
     "DADDR", "DPORT"))
 
 

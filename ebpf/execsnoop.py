@@ -215,10 +215,10 @@ b.attach_kretprobe(event=execve_fnname, fn_name="do_ret_sys_execve")
 if args.time:
     print("%-9s" % ("SYS_TIME"), end="")
 if args.timestamp:
-    print("%-8s" % ("TIME(s)"), end="")
+    print("%-12s" % ("TIME(s)"), end="")
 if args.netns:
     print("%-16s" % ("NETNS"), end="")
-print("%-16s %-6s %-6s %3s %s" % ("PCOMM", "PID", "PPID", "RET", "ARGS"))
+print("%-16s %-6s %-6s %-9s %-9s" % ("PCOMM", "PID", "PPID", "RET", "ARGS"))
 
 class EventType(object):
     EVENT_ARG = 0
@@ -245,13 +245,13 @@ def get_ppid(pid):
 def print_event(cpu, data, size):
     event = b["events"].event(data)
     skip = False
-    
+
 
     if event.type == EventType.EVENT_ARG:
         argv[event.pid].append(event.argv)
-       
+
     elif event.type == EventType.EVENT_RET:
-        
+
         if event.retval != 0 and not args.fails:
             skip = True
         if args.name and not re.search(bytes(args.name), event.comm):
@@ -267,15 +267,15 @@ def print_event(cpu, data, size):
 
         if not skip:
 	    if args.time:
-                printb(b"%-9s" % strftime("%H:%M:%S").encode('ascii'), nl="")
+                printb(b"%-12s" % strftime("%H:%M:%S").encode('ascii'), nl="")
             if args.timestamp:
-                printb(b"%-8.3f" % (time.time() - start_ts), nl="")
+                printb(b"%-12.3f" % (time.time() - start_ts), nl="")
             if args.netns:
 		printb(b"%-16d" % event.netns, nl="")
             ppid = event.ppid if event.ppid > 0 else get_ppid(event.pid)
             ppid = b"%d" % ppid if ppid > 0 else b"?"
             argv_text = b' '.join(argv[event.pid]).replace(b'\n', b'\\n')
-            printb(b"%-16s %-6d %-6s %3d %s" % (event.comm, event.pid,
+            printb(b"%-16s %-6d %-6s %-9d %-9s" % (event.comm, event.pid,
                    ppid, event.retval, argv_text))
         try:
             del(argv[event.pid])
