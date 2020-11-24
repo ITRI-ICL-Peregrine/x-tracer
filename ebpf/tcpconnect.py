@@ -273,7 +273,7 @@ print("%-6s %-12s %-2s %-16s %-16s %-10s" % ("PID", "COMM", "IP", "SADDR",
 
 start_ts = 0
 
-# read events
+# read events 
 b["ipv4_events"].open_perf_buffer(print_ipv4_event)
 b["ipv6_events"].open_perf_buffer(print_ipv6_event)
 while 1:

@@ -1,9 +1,3 @@
-x-tracer includes 7 ebp tools(BCC),probes to trace the process events:
-
-1. Tcp connections: closed, active, established, life
-2. Block device I/O 
-3. New executed processes
-4. Cache kernel function calls
 
 <h2>Basic Architecture/Flow of x-tracer:</h2>
 
