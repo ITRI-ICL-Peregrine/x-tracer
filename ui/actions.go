@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"github.com/ITRI-ICL-Peregrine/x-tracer/events"
+	//"github.com/ITRI-ICL-Peregrine/x-tracer/events"
 	"github.com/jroimartin/gocui"
 	"time"
 	"github.com/ITRI-ICL-Peregrine/x-tracer/getval"
@@ -88,14 +88,14 @@ func actionViewPodsDelete(g *gocui.Gui, v *gocui.View) error {
 // View pod logs: Up
 func actionViewPodsLogsUp(g *gocui.Gui, v *gocui.View) error {
 	moveViewCursorUp(g, v, 0)
-	events.PublishEvent("logs:refresh", events.EmptyMessage{})
+	//events.PublishEvent("logs:refresh", events.EmptyMessage{})
 	return nil
 }
 
 // View pod logs: Down
 func actionViewPodsLogsDown(g *gocui.Gui, v *gocui.View) error {
 	moveViewCursorDown(g, v, false)
-	events.PublishEvent("logs:refresh", events.EmptyMessage{})
+	//events.PublishEvent("logs:refresh", events.EmptyMessage{})
 	return nil
 }
 

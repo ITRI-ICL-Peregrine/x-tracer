@@ -4,11 +4,13 @@ import (
 	"fmt"
 	pb "github.com/ITRI-ICL-Peregrine/x-tracer/api"
 	"github.com/ITRI-ICL-Peregrine/x-tracer/database"
-	"github.com/ITRI-ICL-Peregrine/x-tracer/events"
+	"github.com/ITRI-ICL-Peregrine/x-tracer/datastruct"
+	"github.com/ITRI-ICL-Peregrine/x-tracer/ui"
 	"github.com/gogo/protobuf/sortkeys"
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"os"
 	"net"
 	"strings"
 )
@@ -49,7 +51,7 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 		parse := strings.Fields(string(r.Log))
 
 		if r.ProbeName == "tcpconnect" {
-			events.PublishEvent("log:receive", events.ReceiveLogEvent{ProbeName: r.ProbeName,
+			tcp := datastruct.ReceiveLogEvent{ProbeName: r.ProbeName,
 				Sys_Time: parse[0],
 				T:        parse[1],
 				Pid:      parse[3],
@@ -59,9 +61,29 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 				Daddr:    parse[7],
 				Dport:    parse[8],
 				Sport:    "0",
-			})
+			}
+			tcplog := database.TcpLog(tcp)
+			err := database.UpdateLogs(tcplog)
+			if err != nil {
+				os.Exit(1)
+			}
+			if Probe_Num == 1 {
+
+				ui.RefreshSingleLogs(r.ProbeName)
+
+			} else if Probe_Num == 4 {
+
+				ui.RefreshIntegratedLogs(r.ProbeName)
+
+			} else {
+
+				ui.RefreshTcpLogs(r.ProbeName)
+			}
+
+
+
 		} else if r.ProbeName == "tcptracer" {
-			events.PublishEvent("log:receive", events.ReceiveLogEvent{ProbeName: r.ProbeName,
+			tcp := datastruct.ReceiveLogEvent{ProbeName: r.ProbeName,
 				Sys_Time: parse[0],
 				T:        parse[1],
 				Pid:      parse[3],
@@ -71,9 +93,30 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 				Daddr:    parse[7],
 				Dport:    parse[9],
 				Sport:    parse[8],
-			})
+			}
+			tcplog := database.TcpLog(tcp)
+			err := database.UpdateLogs(tcplog)
+			if err != nil {
+				os.Exit(1)
+			}
+			if Probe_Num == 1 {
+
+				ui.RefreshSingleLogs(r.ProbeName)
+
+			} else if Probe_Num == 4 {
+
+				ui.RefreshIntegratedLogs(r.ProbeName)
+
+			} else {
+
+				ui.RefreshTcpLogs(r.ProbeName)
+			}
+
+
+
+
 		} else if r.ProbeName == "tcpaccept" {
-			events.PublishEvent("log:receive", events.ReceiveLogEvent{ProbeName: r.ProbeName,
+			tcp := datastruct.ReceiveLogEvent{ProbeName: r.ProbeName,
 				Sys_Time: parse[0],
 				T:        parse[1],
 				Pid:      parse[3],
@@ -83,10 +126,29 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 				Daddr:    parse[6],
 				Dport:    parse[7],
 				Sport:    parse[9],
-			})
+			}
+			tcplog := database.TcpLog(tcp)
+			err := database.UpdateLogs(tcplog)
+			if err != nil {
+				os.Exit(1)
+			}
+			if Probe_Num == 1 {
+
+				ui.RefreshSingleLogs(r.ProbeName)
+
+			} else if Probe_Num == 4 {
+
+				ui.RefreshIntegratedLogs(r.ProbeName)
+
+			} else {
+
+				ui.RefreshTcpLogs(r.ProbeName)
+			}
+
+
 		} else if r.ProbeName == "tcplife" {
 
-			events.PublishEvent("log:tcplife", events.TcpLifeLogEvent{TimeStamp: 0,
+			tllogs := datastruct.TcpLifeLogEvent{TimeStamp: 0,
 				ProbeName: r.ProbeName,
 				Sys_Time:  parse[0],
 				Pid:       parse[2],
@@ -98,10 +160,27 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 				Tx_kb:     parse[8],
 				Rx_kb:     parse[9],
 				Ms:        parse[10],
-			})
+			}
+
+			tcplife := database.TcpLifeLog(tllogs)
+			err := database.UpdateTcpLifeLogs(tcplife)
+			if err != nil {
+				os.Exit(1)
+			}
+			if Probe_Num == 1 {
+
+				ui.RefreshSingleLogs(r.ProbeName)
+
+			} else if Probe_Num == 4 {
+
+				ui.RefreshIntegratedLogs(r.ProbeName)
+
+			}
+
+
 		} else if r.ProbeName == "execsnoop" {
 			if len(parse) < 8 {
-				events.PublishEvent("log:execsnoop", events.ExecSnoopLogEvent{TimeStamp: 0,
+				eslogs := datastruct.ExecSnoopLogEvent{TimeStamp: 0,
 					ProbeName: r.ProbeName,
 					Sys_Time:  parse[0],
 					T:         parse[1],
@@ -110,10 +189,25 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 					Ppid:      parse[5],
 					Ret:       parse[6],
 					Args:      parse[3],
-				})
+				}
+
+				eslog := database.ExecSnoopLog(eslogs)
+				err := database.UpdateEsLogs(eslog)
+				if err != nil {
+					os.Exit(1)
+				}
+				if Probe_Num == 1 {
+					ui.RefreshSingleLogs(r.ProbeName)
+
+				} else if Probe_Num == 4 {
+
+					ui.RefreshIntegratedLogs(r.ProbeName)
+
+				}
+
 
 			} else {
-				events.PublishEvent("log:execsnoop", events.ExecSnoopLogEvent{TimeStamp: 0,
+				eslogs := datastruct.ExecSnoopLogEvent{TimeStamp: 0,
 					ProbeName: r.ProbeName,
 					Sys_Time:  parse[0],
 					T:         parse[1],
@@ -122,11 +216,27 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 					Ppid:      parse[5],
 					Ret:       parse[6],
 					Args:      parse[7],
-				})
+				}
+
+				eslog := database.ExecSnoopLog(eslogs)
+				err := database.UpdateEsLogs(eslog)
+				if err != nil {
+					os.Exit(1)
+				}
+				if Probe_Num == 1 {
+					ui.RefreshSingleLogs(r.ProbeName)
+
+				} else if Probe_Num == 4 {
+
+					ui.RefreshIntegratedLogs(r.ProbeName)
+
+				}
 			}
+
+
 		} else if r.ProbeName == "biosnoop" {
 
-			events.PublishEvent("log:biosnoop", events.BioSnoopLogEvent{TimeStamp: 0,
+			bslogs := datastruct.BioSnoopLogEvent{TimeStamp: 0,
 				ProbeName: r.ProbeName,
 				Sys_Time:  parse[0],
 				T:         parse[1],
@@ -137,10 +247,27 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 				Sector:    parse[6],
 				Bytes:     parse[7],
 				Lat:       parse[9],
-			})
+			}
+
+			bslog := database.BioSnoopLog(bslogs)
+			err := database.UpdateBsLogs(bslog)
+			if err != nil {
+				os.Exit(1)
+			}
+			if Probe_Num == 1 {
+
+				ui.RefreshSingleLogs(r.ProbeName)
+
+			} else if Probe_Num == 4 {
+
+				ui.RefreshIntegratedLogs(r.ProbeName)
+
+			}
+
+
 		} else if r.ProbeName == "cachestat" {
 
-			events.PublishEvent("log:cachestat", events.CacheStatLogEvent{TimeStamp: 0,
+			cslogs := datastruct.CacheStatLogEvent{TimeStamp: 0,
 				ProbeName: r.ProbeName,
 				Sys_Time:  parse[0],
 				Pid:       parse[1],
@@ -151,8 +278,26 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 				Dirties:   parse[7],
 				Read_hit:  parse[8],
 				Write_hit: parse[9],
-			})
+			}
+			cslog := database.CacheStatLog(cslogs)
+			err := database.UpdateCsLogs(cslog)
+			if err != nil {
+				os.Exit(1)
+			}
+			if Probe_Num == 1 {
+
+				ui.RefreshSingleLogs(r.ProbeName)
+
+			} else if Probe_Num == 4 {
+
+				ui.RefreshIntegratedLogs(r.ProbeName)
+
+			}
+
 		}
+
+
+
 
 	}
 }

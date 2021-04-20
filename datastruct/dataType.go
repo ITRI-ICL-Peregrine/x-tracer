@@ -1,4 +1,4 @@
-package events
+package datastruct
 
 type EmptyMessage struct {
 	Pn string

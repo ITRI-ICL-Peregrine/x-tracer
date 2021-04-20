@@ -2,18 +2,14 @@ package ui
 
 import (
 	"fmt"
-	"github.com/ITRI-ICL-Peregrine/x-tracer/events"
-	"github.com/ITRI-ICL-Peregrine/x-tracer/pkg"
+	"github.com/ITRI-ICL-Peregrine/x-tracer/database"
 	"github.com/jroimartin/gocui"
 )
 
-func refreshIntegratedLogs(e events.Event) {
-
-	if e, ok := e.(events.EmptyMessage); ok {
+func RefreshIntegratedLogs(pn string) {
 
 		g.Update(func(g *gocui.Gui) error {
 
-			pn := e.Pn
 			if pn == "tcplife" {
 				viewtl, err := g.View("tcplife")
 				if err != nil {
@@ -21,7 +17,7 @@ func refreshIntegratedLogs(e events.Event) {
 				}
 				viewtl.Clear()
 
-				_, _ = fmt.Fprint(viewtl, pkg.GetActiveLogs(pn))
+				_, _ = fmt.Fprint(viewtl, database.GetActiveLogs(pn))
 
 				g.SetViewOnTop("tcplife")
 
@@ -35,7 +31,7 @@ func refreshIntegratedLogs(e events.Event) {
 				}
 				viewcs.Clear()
 
-				_, _ = fmt.Fprint(viewcs, pkg.GetActiveLogs(pn))
+				_, _ = fmt.Fprint(viewcs, database.GetActiveLogs(pn))
 
 				g.SetViewOnTop("cachestat")
 				viewcs.Autoscroll = true
@@ -48,7 +44,7 @@ func refreshIntegratedLogs(e events.Event) {
 				}
 				viewes.Clear()
 
-				_, _ = fmt.Fprint(viewes, pkg.GetActiveLogs(pn))
+				_, _ = fmt.Fprint(viewes, database.GetActiveLogs(pn))
 
 				g.SetViewOnTop("execsnoop")
 
@@ -62,7 +58,7 @@ func refreshIntegratedLogs(e events.Event) {
 				}
 				view.Clear()
 
-				_, _ = fmt.Fprint(view, pkg.GetActiveLogs(pn))
+				_, _ = fmt.Fprint(view, database.GetActiveLogs(pn))
 				g.SetViewOnTop("tcplogs")
 
 				view.Autoscroll = true
@@ -71,23 +67,19 @@ func refreshIntegratedLogs(e events.Event) {
 			}
 
 		})
-	}
 }
 
-func refreshSingleLogs(e events.Event) {
-
-	if e, ok := e.(events.EmptyMessage); ok {
+func RefreshSingleLogs(pn string) {
 
 		g.Update(func(g *gocui.Gui) error {
 
-			pn := e.Pn
 			view, err := g.View("logs")
 			if err != nil {
 				return err
 			}
 			view.Clear()
 
-			_, _ = fmt.Fprint(view, pkg.GetActiveLogs(pn))
+			_, _ = fmt.Fprint(view, database.GetActiveLogs(pn))
 
 			g.SetViewOnTop("logs")
 			g.SetCurrentView("logs")
@@ -96,17 +88,15 @@ func refreshSingleLogs(e events.Event) {
 
 			return nil
 		})
-	}
+
 
 }
 
-func refreshTCPLogs(e events.Event) {
-
-	if e, ok := e.(events.EmptyMessage); ok {
+func RefreshTcpLogs(pn string) {
 
 		g.Update(func(g *gocui.Gui) error {
 
-			pn := e.Pn
+
 			if pn == "tcptracer" {
 				viewtt, err := g.View("halfscreen")
 				if err != nil {
@@ -114,7 +104,7 @@ func refreshTCPLogs(e events.Event) {
 				}
 				viewtt.Clear()
 
-				_, _ = fmt.Fprint(viewtt, pkg.GetActiveLogs(pn))
+				_, _ = fmt.Fprint(viewtt, database.GetActiveLogs(pn))
 
 				g.SetViewOnTop("halfscreen")
 				g.SetCurrentView("halfscreen")
@@ -129,7 +119,7 @@ func refreshTCPLogs(e events.Event) {
 				}
 				viewtc.Clear()
 
-				_, _ = fmt.Fprint(viewtc, pkg.GetActiveLogs(pn))
+				_, _ = fmt.Fprint(viewtc, database.GetActiveLogs(pn))
 
 				g.SetViewOnTop("tcplife")
 				g.SetCurrentView("tcplife")
@@ -144,7 +134,7 @@ func refreshTCPLogs(e events.Event) {
 				}
 				viewtl.Clear()
 
-				_, _ = fmt.Fprint(viewtl, pkg.GetActiveLogs(pn))
+				_, _ = fmt.Fprint(viewtl, database.GetActiveLogs(pn))
 
 				g.SetViewOnTop("tcplogs")
 				g.SetCurrentView("tcplogs")
@@ -154,13 +144,7 @@ func refreshTCPLogs(e events.Event) {
 				return nil
 			}
 		})
-	}
+
 
 }
 
-func SubscribeListeners() {
-	events.Subscribe(refreshIntegratedLogs, "logs:refreshinteg")
-	events.Subscribe(refreshSingleLogs, "logs:refreshsingle")
-	events.Subscribe(refreshTCPLogs, "logs:refreshtcp")
-
-}
