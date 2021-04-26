@@ -136,9 +136,9 @@ func actionViewProbesSelect(g *gocui.Gui, v *gocui.View) error {
 	line, err := getViewLine(g, v)
 	LOG_MOD = "probe"
 
-	G, p, lv := showViewPodsLogs(g)
+	G, p := showViewPodsLogs(g)
 	displayConfirmation(g, line+" probe selected")
-        kube.StartAgent(G, p, lv, line)
+        kube.StartAgent(p,line)
 	G.SetViewOnTop("logs")
 	G.SetCurrentView("logs")
 	return err

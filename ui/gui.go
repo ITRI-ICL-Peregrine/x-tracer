@@ -5,7 +5,7 @@ import (
 	"fmt"
 	pb "github.com/ITRI-ICL-Peregrine/x-tracer/api"
 	"github.com/ITRI-ICL-Peregrine/x-tracer/kube"
-	"io"
+//	"io"
 	"log"
 	"os"
 	"strings"
@@ -225,7 +225,7 @@ func showSelectProbe(g *gocui.Gui) error {
 }
 
 // Show views logs
-func showViewPodsLogs(g *gocui.Gui) (*gocui.Gui, string, io.Writer) {
+func showViewPodsLogs(g *gocui.Gui) (*gocui.Gui, string) {
 	vn := "logs"
 
 	switch LOG_MOD {
@@ -258,11 +258,11 @@ func showViewPodsLogs(g *gocui.Gui) (*gocui.Gui, string, io.Writer) {
 
 		fmt.Fprintln(lv, "Pod you choose is: "+p)
 
-		return g, p, lv
+		return g,p
 
 	}
 
-	return nil, "ok", nil
+	return nil,"ok"
 }
 
 // Refresh pods logs

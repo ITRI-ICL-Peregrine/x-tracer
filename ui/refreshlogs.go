@@ -6,8 +6,9 @@ import (
 	"github.com/jroimartin/gocui"
 )
 
-func RefreshIntegratedLogs(pn string) {
+func RefreshLogs(pn string, ps int64) {
 
+	if ps == 4 {
 		g.Update(func(g *gocui.Gui) error {
 
 			if pn == "tcplife" {
@@ -67,8 +68,87 @@ func RefreshIntegratedLogs(pn string) {
 			}
 
 		})
-}
+	}else if ps == 1{
 
+		 g.Update(func(g *gocui.Gui) error {
+
+                        view, err := g.View("logs")
+                        if err != nil {
+                                return err
+                        }
+                        view.Clear()
+
+                        _, _ = fmt.Fprint(view, database.GetActiveLogs(pn))
+
+                        g.SetViewOnTop("logs")
+                        g.SetCurrentView("logs")
+
+                        view.Autoscroll = true
+
+                        return nil
+                })
+
+
+	} else {
+
+
+		g.Update(func(g *gocui.Gui) error {
+
+
+			if pn == "tcptracer" {
+				viewtt, err := g.View("halfscreen")
+				if err != nil {
+					return err
+				}
+				viewtt.Clear()
+
+				_, _ = fmt.Fprint(viewtt, database.GetActiveLogs(pn))
+
+				g.SetViewOnTop("halfscreen")
+				g.SetCurrentView("halfscreen")
+
+				viewtt.Autoscroll = true
+
+				return nil
+			} else if pn == "tcpconnect" {
+				viewtc, err := g.View("tcplife")
+				if err != nil {
+					return err
+				}
+				viewtc.Clear()
+
+				_, _ = fmt.Fprint(viewtc, database.GetActiveLogs(pn))
+
+				g.SetViewOnTop("tcplife")
+				g.SetCurrentView("tcplife")
+
+				viewtc.Autoscroll = true
+
+				return nil
+			} else {
+				viewtl, err := g.View("tcplogs")
+				if err != nil {
+					return err
+				}
+				viewtl.Clear()
+
+				_, _ = fmt.Fprint(viewtl, database.GetActiveLogs(pn))
+
+				g.SetViewOnTop("tcplogs")
+				g.SetCurrentView("tcplogs")
+
+				viewtl.Autoscroll = true
+
+				return nil
+			}
+		})
+
+
+
+
+	}
+}
+/*
 func RefreshSingleLogs(pn string) {
 
 		g.Update(func(g *gocui.Gui) error {
@@ -147,4 +227,4 @@ func RefreshTcpLogs(pn string) {
 
 
 }
-
+*/
