@@ -2,15 +2,15 @@ package kube
 
 import(
 	"github.com/ITRI-ICL-Peregrine/x-tracer/internal/agentmanager"
-	"github.com/jroimartin/gocui"
-	"io"
-	"fmt"
+//	"github.com/jroimartin/gocui"
+//	"io"
+//	"fmt"
 	"strings"
 	"github.com/ITRI-ICL-Peregrine/x-tracer/getval"
 )
 
 
-func StartAgent(g *gocui.Gui, p string, o io.Writer, probes string) error {
+func StartAgent(p string,probes string) error {
 	cs := GetClientSet()
 	var containerId []string
 
@@ -27,11 +27,11 @@ func StartAgent(g *gocui.Gui, p string, o io.Writer, probes string) error {
 		agent := agentmanager.New(containerId[0], targetNode, nodeIp, cs, allpn)
 
 		//Start x-agent Pod
-		fmt.Fprintln(o, "Starting x-agent Pod...")
+		//fmt.Fprintln(o, "Starting x-agent Pod...")
 
 		agent.ApplyAgentPod()
 
-		fmt.Fprintln(o, "Starting x-agent Service...")
+		//fmt.Fprintln(o, "Starting x-agent Service...")
 		agent.ApplyAgentService()
 
 		agent.SetupCloseHandler()
@@ -41,11 +41,11 @@ func StartAgent(g *gocui.Gui, p string, o io.Writer, probes string) error {
 		tcppn := strings.Join(pn, ",")
 		agent := agentmanager.New(containerId[0], targetNode, nodeIp, cs, tcppn)
 
-		fmt.Fprintln(o, "Starting x-agent Pod...")
+		//fmt.Fprintln(o, "Starting x-agent Pod...")
 
 		agent.ApplyAgentPod()
 
-		fmt.Fprintln(o, "Starting x-agent Service...")
+		//fmt.Fprintln(o, "Starting x-agent Service...")
 		agent.ApplyAgentService()
 
 		agent.SetupCloseHandler()
@@ -54,11 +54,11 @@ func StartAgent(g *gocui.Gui, p string, o io.Writer, probes string) error {
 		agent := agentmanager.New(containerId[0], targetNode, nodeIp, cs, probes)
 
 		//Start x-agent Pod
-		fmt.Fprintln(o, "Starting x-agent Pod...")
+		//fmt.Fprintln(o, "Starting x-agent Pod...")
 
 		agent.ApplyAgentPod()
 
-		fmt.Fprintln(o, "Starting x-agent Service...")
+		//fmt.Fprintln(o, "Starting x-agent Service...")
 		agent.ApplyAgentService()
 
 		agent.SetupCloseHandler()

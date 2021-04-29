@@ -1,4 +1,4 @@
-package events
+package datastruct
 
 type EmptyMessage struct {
 	Pn string
@@ -6,6 +6,7 @@ type EmptyMessage struct {
 
 type ReceiveLogEvent struct {
 	ProbeName string
+	
 	Sys_Time  string
 	T         string
 	Pid       string
@@ -19,6 +20,7 @@ type ReceiveLogEvent struct {
 
 type TcpLifeLogEvent struct {
 	TimeStamp int64
+	
 	ProbeName string
 	Sys_Time  string
 	Pid       string
@@ -34,6 +36,7 @@ type TcpLifeLogEvent struct {
 
 type ExecSnoopLogEvent struct {
 	TimeStamp int64
+	
 	ProbeName string
 	Sys_Time  string
 	T         string
@@ -46,6 +49,7 @@ type ExecSnoopLogEvent struct {
 
 type BioSnoopLogEvent struct {
 	TimeStamp int64
+	
 	ProbeName string
 	Sys_Time  string
 	T         string
@@ -60,6 +64,7 @@ type BioSnoopLogEvent struct {
 
 type CacheStatLogEvent struct {
 	TimeStamp int64
+
 	ProbeName string
 	Sys_Time  string
 	Pid       string
