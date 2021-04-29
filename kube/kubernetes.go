@@ -10,7 +10,6 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/kubectl/pkg/describe"
 	"k8s.io/kubectl/pkg/describe/versioned"
-	"github.com/ITRI-ICL-Peregrine/x-tracer/getval"
 	"log"
 	"os"
 	"reflect"
@@ -19,6 +18,8 @@ import (
 	"strings"
 	"time"
 )
+
+var NAMESPACE string = "default"
 
 // Get Kubernetes client set
 func GetClientSet() *kubernetes.Clientset {
@@ -52,7 +53,7 @@ func GetFieldString(e *v1.ContainerStatus, field string) string {
 func GetPods() (*v1.PodList, error) {
 	cs := GetClientSet()
 
-	return cs.CoreV1().Pods(getval.NAMESPACE).List(metav1.ListOptions{})
+	return cs.CoreV1().Pods(NAMESPACE).List(metav1.ListOptions{})
 }
 
 // Get namespaces
@@ -67,7 +68,7 @@ func GetPodContainersName(p string) []string {
 	var pc []string
 	cs := GetClientSet()
 
-	pod, _ := cs.CoreV1().Pods(getval.NAMESPACE).Get(p, metav1.GetOptions{})
+	pod, _ := cs.CoreV1().Pods(NAMESPACE).Get(p, metav1.GetOptions{})
 	for _, c := range pod.Spec.Containers {
 		pc = append(pc, c.Name)
 	}
@@ -78,7 +79,7 @@ func GetPodContainersName(p string) []string {
 func GetPodContainersID(p string) []string {
 	cs := GetClientSet()
 	var id []string
-	podObj, _ := cs.CoreV1().Pods(getval.NAMESPACE).Get(p, metav1.GetOptions{})
+	podObj, _ := cs.CoreV1().Pods(NAMESPACE).Get(p, metav1.GetOptions{})
 
 	var conId string
 	for c := range podObj.Status.ContainerStatuses {
@@ -93,7 +94,7 @@ func GetPodContainersID(p string) []string {
 func DeletePod(p string) error {
 	cs := GetClientSet()
 
-	return cs.CoreV1().Pods(getval.NAMESPACE).Delete(p, &metav1.DeleteOptions{})
+	return cs.CoreV1().Pods(NAMESPACE).Delete(p, &metav1.DeleteOptions{})
 }
 
 // Get pod container logs
@@ -106,7 +107,7 @@ func GetPodContainerLogs(p string, c string, o io.Writer) error {
 		TailLines: &tl,
 	}
 
-	req := cs.CoreV1().Pods(getval.NAMESPACE).GetLogs(p, opts)
+	req := cs.CoreV1().Pods(NAMESPACE).GetLogs(p, opts)
 
 	readCloser, err := req.Stream()
 	if err != nil {
@@ -123,7 +124,7 @@ func GetPodContainerLogs(p string, c string, o io.Writer) error {
 func GetTargetNode(p string) string {
 
 	cs := GetClientSet()
-	podObj, _ := cs.CoreV1().Pods(getval.NAMESPACE).Get(p, metav1.GetOptions{})
+	podObj, _ := cs.CoreV1().Pods(NAMESPACE).Get(p, metav1.GetOptions{})
 	podDesc := versioned.PodDescriber{Interface: cs}
 	descStr, err := podDesc.Describe(podObj.Namespace, podObj.Name, describe.DescriberSettings{ShowEvents: false})
 	if err != nil {

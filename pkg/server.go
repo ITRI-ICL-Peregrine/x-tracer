@@ -3,12 +3,11 @@ package pkg
 import (
 
 	pb "github.com/ITRI-ICL-Peregrine/x-tracer/api"
-	"github.com/ITRI-ICL-Peregrine/x-tracer/database"
-	"github.com/ITRI-ICL-Peregrine/x-tracer/datastruct"
+	"github.com/ITRI-ICL-Peregrine/x-tracer/module"
 	"google.golang.org/grpc"
 	"io"
 	"log"
-	"os"
+//	"os"
 	"net"
 	"strings"
 )
@@ -35,7 +34,7 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 		parse := strings.Fields(string(r.Log))
 
 		if r.ProbeName == "tcpconnect" {
-			tcp := datastruct.ReceiveLogEvent{ProbeName: r.ProbeName,
+			tcp := module.ReceiveLogEvent{ProbeName: r.ProbeName,
 
 				Sys_Time: parse[0],
 				T:        parse[1],
@@ -47,7 +46,9 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 				Dport:    parse[8],
 				Sport:    "0",
 			}
-			tcplog := database.TcpLog(tcp)
+
+			module.TcplogChan <- tcp
+/*			tcplog := database.TcpLog(tcp)
 			err := database.UpdateLogs(tcplog)
 			if err != nil {
 				os.Exit(1)
@@ -55,11 +56,11 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 
 			getLogs(LOG_MODE,r.ProbeName, r.Pid)
 
+*/
 
 
-
-		} else if r.ProbeName == "tcptracer" {
-			tcp := datastruct.ReceiveLogEvent{ProbeName: r.ProbeName,
+		}/* else if r.ProbeName == "tcptracer" {
+			tcp := module.ReceiveLogEvent{ProbeName: r.ProbeName,
 				Sys_Time: parse[0],
 				T:        parse[1],
 				Pid:      parse[3],
@@ -78,7 +79,7 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 			getLogs(LOG_MODE,r.ProbeName, r.Pid)
 
 		} else if r.ProbeName == "tcpaccept" {
-			tcp := datastruct.ReceiveLogEvent{ProbeName: r.ProbeName,
+			tcp := module.ReceiveLogEvent{ProbeName: r.ProbeName,
 				Sys_Time: parse[0],
 				T:        parse[1],
 				Pid:      parse[3],
@@ -100,7 +101,7 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 
 		} else if r.ProbeName == "tcplife" {
 
-			tllogs := datastruct.TcpLifeLogEvent{TimeStamp: 0,
+			tllogs := module.TcpLifeLogEvent{TimeStamp: 0,
 				
 				ProbeName: r.ProbeName,
 				Sys_Time:  parse[0],
@@ -123,7 +124,7 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 			getLogs(LOG_MODE,r.ProbeName, r.Pid)
 		} else if r.ProbeName == "execsnoop" {
 			if len(parse) < 8 {
-				eslogs := datastruct.ExecSnoopLogEvent{TimeStamp: 0,
+				eslogs := module.ExecSnoopLogEvent{TimeStamp: 0,
 					
 					ProbeName: r.ProbeName,
 					Sys_Time:  parse[0],
@@ -142,8 +143,8 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 				}
 				getLogs(LOG_MODE,r.ProbeName, r.Pid)
 			} else {
-				eslogs := datastruct.ExecSnoopLogEvent{TimeStamp: 0,
-					
+				eslogs := module.ExecSnoopLogEvent{TimeStamp: 0,
+
 					ProbeName: r.ProbeName,
 					Sys_Time:  parse[0],
 					T:         parse[1],
@@ -165,8 +166,8 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 
 		} else if r.ProbeName == "biosnoop" {
 
-			bslogs := datastruct.BioSnoopLogEvent{TimeStamp: 0,
-				
+			bslogs := module.BioSnoopLogEvent{TimeStamp: 0,
+
 				ProbeName: r.ProbeName,
 				Sys_Time:  parse[0],
 				T:         parse[1],
@@ -188,8 +189,8 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 
 		} else if r.ProbeName == "cachestat" {
 
-			cslogs := datastruct.CacheStatLogEvent{TimeStamp: 0,
-				
+			cslogs := module.CacheStatLogEvent{TimeStamp: 0,
+
 				ProbeName: r.ProbeName,
 				Sys_Time:  parse[0],
 				Pid:       parse[1],
@@ -208,6 +209,7 @@ func (s *StreamServer) RouteLog(stream pb.SentLog_RouteLogServer) error {
 			}
 			getLogs(LOG_MODE,r.ProbeName, r.Pid)
 		}
+		*/
 
 
 
